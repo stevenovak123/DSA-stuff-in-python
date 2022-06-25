@@ -1,70 +1,263 @@
-import gc
+i = 0
+
+# Node for Doubly Linked List
+class node:
+    def __init__(self, k=0, p=None, n=None):
+        self.key = k
+        self.prev = p
+        self.next = n
 
 
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-        self.prev = None
+# Head, Tail, first & temp Node
+head = None
+first = None
+temp = None
+tail = None
+
+# Function to add a node in the
+# Doubly Linked List
+def addnode(k: int):
+    global i, head, first, tail
+    # Allocating memory
+    # to the Node ptr
+    ptr = node(k)
+
+    # If Linked List is empty
+    if head == None:
+        head = ptr
+        first = head
+        tail = head
+
+    # Else insert at the end of the
+    # Linked List
+    else:
+        temp = ptr
+        first.next = temp
+        temp.prev = first
+        first = temp
+        tail = temp
+
+    # Increment for number of Nodes
+    # in the Doubly Linked List
+    i += 1
 
 
-class DoublyLinkedList:
-    def __init__(self):
-        self.head = None
+# Function to traverse the Doubly
+# Linked List
+def traverse():
+    # Nodes points towards head node
+    ptr = head
 
-    # * insert node at the front
-    def insert_front(self, data):
+    # While pointer is not None,
+    # traverse and print the node
+    while ptr != None:
 
-        # * create node and assigning data to the node
-        new_node = Node(data)
+        # Print key of the node
+        print(ptr.key, end=" ")
+        ptr = ptr.next
 
-        # * Make new node the head
-        new_node.next = self.head
+    print()
 
-        # * assign prev to null. Currently constructor assigns it to null
 
-        # * remove the head from the second node and point it to the inserted Node
-        if self.head is not None:
-            self.head.prev = new_node
+# Function to insert a node at the
+# beginning of the linked list
+def insertatbegin(k: int):
+    global head, first, tail, i
 
-        self.head = new_node
+    # Allocating memory
+    # to the Node ptr
+    ptr = node(k)
 
-    def insert_after(self, prev_node, data):
+    # If head is None
+    if head == None:
+        first = ptr
+        first = head
+        tail = head
 
-        # * check if previous node is null
-        if prev_node is None:
-            print("previous node cannot be null")
-            return
+    # Else insert at beginning and
+    # change the head to current node
+    else:
+        temp = ptr
+        temp.next = head
+        head.prev = temp
+        head = temp
 
-        new_node = Node(data)
+    i += 1
 
-        # * set next of newNode to the next of prevNode
-        new_node.next = prev_node.next
 
-        # * set next of prev node to newNode
-        prev_node.next = new_node
+# Function to insert Node at end
+def insertatend(k: int):
+    global head, first, tail, i
 
-        # *set prev of newNode to the previous node
-        new_node.prev = prev_node
+    # Allocating memory
+    # to the Node ptr
+    ptr = node(k)
 
-        # * set prev of newNode's next to newNode
-        if new_node.next:
-            new_node.next.prev = new_node
+    # If head is None
+    if head == None:
+        first = ptr
+        first = head
+        tail = head
 
-        def insert_end(self, data):
-            new_node = Node(data)
+    # Else insert at the end
+    else:
+        temp = ptr
+        temp.prev = tail
+        tail.next = temp
+        tail = temp
 
-            # * if the linked list is empty,make newNode as head
-            if self.head is None:
-                self.head = new_node
-                return
+    i += 1
 
-            # * store the head node temporarily
-            temp = self.head
 
-            # * if the linked list is not empty, traverse to the end of the linked List
-            while temp.next:
-                temp = temp.next
+# Function to insert Node at any
+# position pos
+def insertatpos(k: int, pos: int):
+    global i
 
-            # * assign the next of the last node to the newNode
-            temp.next = new_node
+    # For Invalid Position
+    if pos < 1 or pos > i + 1:
+        print("Please enter a" " valid position")
+
+    # If position is at the front,
+    # then call insertatbegin()
+    elif pos == 1:
+        insertatbegin(k)
+
+    # Position is at length of Linked
+    # list + 1, then insert at the end
+    elif pos == i + 1:
+        insertatend(k)
+
+    # Else traverse till position pos
+    # and insert the Node
+    else:
+        src = head
+
+        # Move head pointer to pos
+        while pos:
+            pos -= 1
+            src = src.next
+
+        # Allocate memory to new Node
+        ptr = node(k)
+
+        # Change the previous and next
+        # pointer of the nodes inserted
+        # with previous and next node
+        ptr.next = src
+        ptr.prev = src.prev
+        src.prev.next = ptr
+        src.prev = ptr
+        i += 1
+
+
+# Function to delete node at the
+# beginning of the list
+def delatbegin():
+    # Move head to next and
+    # decrease length by 1
+    global head, i
+    head = head.next
+    i -= 1
+
+
+# Function to delete at the end
+# of the list
+def delatend():
+    # Mode tail to the prev and
+    # decrease length by 1
+    global tail, i
+    tail = tail.prev
+    tail.next = None
+    i -= 1
+
+
+# Function to delete the node at
+# a given position pos
+def delatpos(pos: int):
+    global i
+    # If invalid position
+    if pos < 1 or pos > i + 1:
+        print("Please enter a" " valid position")
+
+    # If position is 1, then
+    # call delatbegin()
+    elif pos == 1:
+        delatbegin()
+
+    # If position is at the end, then
+    # call delatend()
+    elif pos == i:
+        delatend()
+
+    # Else traverse till pos, and
+    # delete the node at pos
+    else:
+        # Src node to find which
+        # node to be deleted
+        src = head
+        pos -= 1
+
+        # Traverse node till pos
+        while pos:
+            pos -= 1
+            src = src.next
+
+        # Change the next and prev
+        # pointer of pre and aft node
+        src.prev.next = src.next
+        src.next.prev = src.prev
+
+        # Decrease the length of the
+        # Linked List
+        i -= 1
+
+
+# Driver Code
+if __name__ == "__main__":
+    # Adding node to the linked List
+    addnode(2)
+    addnode(4)
+    addnode(9)
+    addnode(1)
+    addnode(21)
+    addnode(22)
+
+    # To print the linked List
+    print("Linked List: ")
+    traverse()
+
+    print("\n")
+
+    # To insert node at the beginning
+    insertatbegin(1)
+    print("Linked List after inserting 1 at beginning: ")
+    traverse()
+
+    # To insert at the end
+    insertatend(0)
+    print("Linked List after inserting 0 at end: ")
+    traverse()
+
+    # To insert Node with
+    # value 44 after 3rd Node
+    insertatpos(44, 3)
+    print("Linked List after inserting 44 after 3rd Node: ")
+    traverse()
+
+    print("\n")
+
+    # To delete node at the beginning
+    delatbegin()
+    print("Linked List after deleting node at beginning: ")
+    traverse()
+
+    # To delete at the end
+    delatend()
+    print("Linked List after deleting node at end: ")
+    traverse()
+
+    # To delete Node at position 5
+    print("Linked List after deleting node at position 5: ")
+    delatpos(5)
+    traverse()
